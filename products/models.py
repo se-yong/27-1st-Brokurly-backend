@@ -13,7 +13,7 @@ class Menu(TimeStampModel):
 
 class Category(TimeStampModel):
     name = models.CharField(max_length=50)
-    menu = models.ForeignKey(Menu, on_delete=models.CASCADE)
+    menu = models.ForeignKey('Menu', on_delete=models.CASCADE)
 
     class Meta:
         db_table = 'categories'
@@ -32,6 +32,7 @@ class Product(TimeStampModel):
     price              = models.DecimalField(max_digits=10, decimal_places=2)
     weight             = models.DecimalField(max_digits=3, decimal_places=2)
     inventory_quantity = models.IntegerField(default=0)
+    category           = models.ForeignKey('Category', on_delete=models.CASCADE)
 
     class Meta:
         db_table = 'products'
