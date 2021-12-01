@@ -366,3 +366,4 @@ zsdoc/data
 my_settings.py
 
 .vscode
+db_uploader.py
