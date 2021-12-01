@@ -4,7 +4,7 @@ from products.models import Product
 from users.models    import User
 from core.models     import TimeStampModel
 
-class OrderStatus(TimeStampModel):
+class OrderStatus(models.Model):
     status = models.CharField(max_length=50)
 
     class Meta:
@@ -24,7 +24,7 @@ class Order(TimeStampModel):
     def __str__(self):
         return self.order_number
 
-class OrderItemsStatus(TimeStampModel):
+class OrderItemsStatus(models.Model):
     status = models.CharField(max_length=50)
 
     class Meta:
