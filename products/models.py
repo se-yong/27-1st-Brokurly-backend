@@ -39,3 +39,10 @@ class Product(TimeStampModel):
 
     def __str__(self):
         return self.name
+        
+class Image(TimeStampModel):
+    url     = models.URLField()
+    product = models.ForeignKey("Product",on_delete=models.CASCADE)
+  
+    class Meta:
+        db_table = 'images'
