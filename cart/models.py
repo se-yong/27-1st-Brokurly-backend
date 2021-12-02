@@ -10,4 +10,4 @@ class Cart(TimeStampModel):
     user     = models.ForeignKey(User, on_delete=models.CASCADE)
 
     class Meta:
-        db_table = 'cart'
+        db_table = 'carts'
