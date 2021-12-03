@@ -367,3 +367,8 @@ my_settings.py
 
 .vscode
 db_uploader.py
+
+categories.csv
+images.csv
+menus.csv
+products.csv
