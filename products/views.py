@@ -26,5 +26,4 @@ class ProductDetailView(View):
 
         except Product.DoesNotExist:
             return JsonResponse({"message" : "INVALID_PRODUCT"}, status = 401)
-        except KeyError:
-            return JsonResponse({"message" : "KEY_ERROR"}, status = 400)
+        
