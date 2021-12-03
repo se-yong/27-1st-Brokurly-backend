@@ -22,7 +22,7 @@ class Category(TimeStampModel):
         return self.name
 
 class Product(TimeStampModel):
-    name               = models.CharField(max_length=50)
+    name               = models.CharField(max_length=100)
     introduction       = models.CharField(max_length=200)
     description        = models.TextField()
     unit               = models.CharField(max_length=10)
@@ -30,7 +30,7 @@ class Product(TimeStampModel):
     package            = models.CharField(max_length=50)
     origin             = models.CharField(max_length=50)
     price              = models.DecimalField(max_digits=10, decimal_places=2)
-    weight             = models.DecimalField(max_digits=3, decimal_places=2)
+    weight             = models.DecimalField(max_digits=10, decimal_places=2)
     stock              = models.IntegerField(default=0)
     category           = models.ForeignKey('Category', on_delete=models.CASCADE)
 
