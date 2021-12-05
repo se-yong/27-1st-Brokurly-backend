@@ -6,7 +6,7 @@ from users.models           import User
 
 REGEX_EMAIL    = '^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
 REGEX_PASSWORD = '/^.*(?=^.{8,15}$)(?=.*\d)(?=.*[a-zA-Z])(?=.*[!@#$%^&+=]).*$/'
-REGEX_USERNAME = '/^(?=.*[a-zA-Z])[-a-zA-Z0-9_.]{4,10}$/'
+REGEX_USERNAME = '/^(?=.*[a-zA-Z])[a-zA-Z0-9]{6,16}$/'
 REGEX_CONTACT  = '/^\d{2,3}-\d{3,4}-\d{4}$/'
 
 def validates_email(email):
