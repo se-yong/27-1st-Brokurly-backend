@@ -9,7 +9,7 @@ from jwt.exceptions import DecodeError
 from users.models   import User
 from my_settings    import SECRET_KEY, ALGORITHM
 
-def signin(func):
+def login_required(func):
     def wrapper(self, request, *args, **kwargs):
         try:
             access_token = request.headers.value('token') # FE에서 보내준 token
