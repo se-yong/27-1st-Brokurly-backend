@@ -5,7 +5,7 @@ from django.http            import JsonResponse
 from django.views           import View
 from django.db              import DataError
 
-from my_settings            import ALGORITHM, SECRET_KEY
+from brokurly.settings      import ALGORITHM, SECRET_KEY
 from users.models           import User
 from core.validator         import validates_email, validates_password, validates_username, validates_contact
 
