@@ -1,3 +1,4 @@
+from django.core.exceptions import MultipleObjectsReturned
 from django.http  import JsonResponse
 from django.views import View
 
@@ -19,11 +20,12 @@ class ProductDetailView(View):
               "package"      : product.package,
               "origin"       : product.origin,
               "weight"       : product.weight,
-              "images"       : [image.url for image in product.image_set.all()]
+              "images"       : product.image_set.all()[0].url
             }
 
             return JsonResponse({"result": result}, status=200)
 
         except Product.DoesNotExist:
-            return JsonResponse({"message" : "INVALID_PRODUCT"}, status = 401)
-        
+            return JsonResponse({"message" : "INVALID_PRODUCT"}, status = 404)
+        except MultipleObjectsReturned:
+            return JsonResponse({"message" : "INVALID_PRODUCT"}, status = 404)
