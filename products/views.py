@@ -11,7 +11,8 @@ class ProductView(View):
             sort_dict   = {
                 0 : 'created_at',
                 1 : 'price',
-                2 : '-price'
+                2 : '-price',
+                3 : 'name'
             }
             category = Category.objects.get(name=category_id)
             products = Product.objects.filter(category=category).all().order_by(sort_dict[sort])
