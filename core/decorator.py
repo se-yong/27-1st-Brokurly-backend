@@ -7,7 +7,7 @@ from json.decoder   import JSONDecodeError
 from jwt.exceptions import DecodeError
 
 from users.models   import User
-from my_settings    import SECRET_KEY, ALGORITHM
+from brokurly.settings    import SECRET_KEY, ALGORITHM
 
 def login_required(func):
     def wrapper(self, request, *args, **kwargs):
