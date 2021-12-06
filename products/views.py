@@ -7,7 +7,6 @@ class ProductView(View):
     def get(self, request):
         try:
             category_id = request.GET.get('category', 'all')
-            # menu_id     = request.GET.get('menus', 'all')
             sort        = request.GET.get('sort', 0)
             sort_dict   = {
                 0 : 'created_at',
@@ -17,12 +16,9 @@ class ProductView(View):
             }
 
             if category_id == 'all':
-                menu = Menu.objects.get(name='채소')
-                category = Category.objects.get(menu=menu)
-                products = Product.objects.filter(category=category).all()
-                product_all = Product.objects.all()
+                products = Product.objects.all()
                 results = []
-                for data_all in product_all:
+                for data_all in products:
                     results.append(
                             {
                                 'name'         : data_all.name,
@@ -36,14 +32,11 @@ class ProductView(View):
 
 
 
-
-
-            if category_id == '쌈채소':
-                category = Category.objects.get(name=category_id)
-                products = Product.objects.filter(category=category).all().order_by(sort_dict[sort])
-                results  = []
-                for product_data in products:
-                    results.append(
+            category = Category.objects.get(name=category_id)
+            products = Product.objects.filter(category=category).all().order_by(sort_dict[sort])
+            results  = []
+            for product_data in products:
+                results.append(
                             {
                                 'name'         : product_data.name,
                                 'introduction' : product_data.introduction,
@@ -52,8 +45,8 @@ class ProductView(View):
                             }
                         )
 
-                print(results)
-                return JsonResponse({'result':results}, status=201)
+            print(results)
+            return JsonResponse({'result':results}, status=201)
 
         except AttributeError:
             return JsonResponse({'message' : 'AttributeError'}, status=400)
