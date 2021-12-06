@@ -7,8 +7,8 @@ class ProductView(View):
     def get(self, request):
         try:
             category_id = request.GET.get('category', '채소')
-            sort = request.GET.get('sort', 0)
-            sort_dict = {
+            sort        = request.GET.get('sort', 0)
+            sort_dict   = {
                 0 : 'created_at',
                 1 : 'price',
                 2 : '-price'
