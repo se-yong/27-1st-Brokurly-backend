@@ -2,7 +2,6 @@ import re
 
 from django.core.exceptions import ValidationError
 
-from users.models           import User
 
 REGEX_EMAIL    = '^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
 REGEX_PASSWORD = '^.*(?=^.{8,15}$)(?=.*\d)(?=.*[a-zA-Z])(?=.*[!@#$%^&+=]).*$'
