@@ -2,7 +2,7 @@ import jwt
 
 from django.http    import JsonResponse
 
-# from json.decoder   import JSONDecodeError
+from json.decoder   import JSONDecodeError
 
 from jwt.exceptions import DecodeError
 
@@ -27,7 +27,7 @@ def signin(func):
         except DecodeError:
             return JsonResponse({'message':'Invalid Token'}, status=400)
 
-        # except JSONDecodeError:
-        #     return JsonResponse({'message':'JSONDecodeError'}, status=404)
+        except JSONDecodeError:
+            return JsonResponse({'message':'JSONDecodeError'}, status=404)
         
     return wrapper
