@@ -8,20 +8,18 @@ from django.core.exceptions import MultipleObjectsReturned
 
 from .models     import Order, OrderStatus, OrderItem, OrderItemsStatus
 from cart.models import Cart
-from users.models import User
 from products.models import Product
 
 class OrderView(View):
     # @데코레이터(token) 들어갈 자리
     def post(self, request):
         try:
-            print(datetime.now())
             data                 = json.loads(request.body)
             order_status         = OrderStatus.objects.get(id=1)
             order_items_status   = OrderItemsStatus.objects.get(id=1)
             
             with transaction.atomic():
-                order = Order.objects.create(order_status=order_status, users=User.objects.get(id=1))
+                order = Order.objects.create(order_status=order_status, users=request.user)
                 bulk_order_item_list = []
             
                 for item in data:
@@ -55,17 +53,17 @@ class OrderView(View):
     
     # @데코레이터(token) 들어갈 자리
     def get(self, request):
-        try:
+        
             orders = Order.objects.filter(users=request.user).prefetch_related(
                 "orderitem_set",
                 "orderitem_set__product__image_set",
                 "orderitem_set__order_items_status").select_related("order_status")
-            
             result=[]
             if not orders.exists():
                 return JsonResponse({"message":result},status=204)
                 
             for order in orders:
+
                 resultItem={
                     "order_id"     : order.id,
                     "order_number" : order.order_number,
@@ -78,14 +76,11 @@ class OrderView(View):
                     "price"    : orderItem.product.price,
                     "quentity" : orderItem.quantity,
                     "status"   : orderItem.order_items_status.status,
-                    }for orderItem in order]
+                    }for orderItem in order.orderitem_set.all()]
                 resultItem["products"] = resultItem_list
                 result.append(resultItem)
 
-            return JsonResponse({"message":result},status=200)
-            
-        except Exception:
-            return JsonResponse({"message":"ERROR"},status=400)
+            return JsonResponse({"result":result},status=200)
 
     # @데코레이터 들어갈자리
     def patch(self, request):
@@ -93,7 +88,7 @@ class OrderView(View):
             data        = json.loads(request.body)
             orderStatus = OrderStatus.objects.get(id=9)
             itemsStatus = OrderItemsStatus.objects.get(id=9)
-
+            
             with transaction.atomic():
                 if Order.objects.filter(id=data["order_id"]).exists():
                     order = Order.objects.filter(id=data["order_id"]).update(order_status=orderStatus)
