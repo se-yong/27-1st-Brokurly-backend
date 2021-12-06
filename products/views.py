@@ -17,7 +17,7 @@ class ProductDetailView(View):
               "description"  : product.description,
               "unit"         : product.unit,
               "shipping"     : product.shipping,
-              "package"      : product.package,
+              "itemPackage"  : product.package,
               "origin"       : product.origin,
               "weight"       : product.weight,
               "images"       : product.image_set.all()[0].url
@@ -28,4 +28,4 @@ class ProductDetailView(View):
         except Product.DoesNotExist:
             return JsonResponse({"message" : "INVALID_PRODUCT"}, status = 404)
         except MultipleObjectsReturned:
-            return JsonResponse({"message" : "INVALID_PRODUCT"}, status = 404)
+            return JsonResponse({"message" : "INVALID_PRODUCT"}, status = 400)
