@@ -5,9 +5,9 @@ from django.core.exceptions import ValidationError
 from users.models           import User
 
 REGEX_EMAIL    = '^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
-REGEX_PASSWORD = '/^.*(?=^.{8,15}$)(?=.*\d)(?=.*[a-zA-Z])(?=.*[!@#$%^&+=]).*$/'
+REGEX_PASSWORD = '^.*(?=^.{8,15}$)(?=.*\d)(?=.*[a-zA-Z])(?=.*[!@#$%^&+=]).*$'
 REGEX_USERNAME = '^[a-zA-Z0-9]{6,16}$'
-REGEX_CONTACT  = '/^\d{2,3}-\d{3,4}-\d{4}$/'
+REGEX_CONTACT  = '^\d{2,3}-\d{3,4}-\d{4}$'
 
 def validates_email(email):
     if not re.match(REGEX_EMAIL, email) or email is None:
