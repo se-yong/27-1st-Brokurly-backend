@@ -43,7 +43,7 @@ class OrderView(View):
         except DataError:
             return JsonResponse({"message":"DATA_ERROR"},status = 401)
         except transaction.TransactionManagementError:
-            return JsonResponse({"message":"TRANSACTION_ERROR"},status=401)
+            return JsonResponse({"message":"TRANSACTION_ERROR"},status=400)
     
     # @데코레이터(token) 들어갈 자리
     def get(self, request):
@@ -62,7 +62,9 @@ class OrderView(View):
                     "order_id"     : order.id,
                     "order_number" : order.order_number,
                     "order_status" : order.order_status.status,
-                    }
+                    } [{
+                        
+                    }]
 
                 resultItem_list=[]
                 for orderItem in order.orderitem_set.all():
@@ -73,7 +75,6 @@ class OrderView(View):
                         "price"    : orderItem.product.price,
                         "quentity" : orderItem.quantity,
                         "status"   : orderItem.order_items_status.status,
-
                     })
                 resultItem["products"] = resultItem_list
                 result.append(resultItem)
