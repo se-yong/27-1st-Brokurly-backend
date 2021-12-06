@@ -27,5 +27,3 @@ class ProductDetailView(View):
 
         except Product.DoesNotExist:
             return JsonResponse({"message" : "INVALID_PRODUCT"}, status = 404)
-        except MultipleObjectsReturned:
-            return JsonResponse({"message" : "INVALID_PRODUCT"}, status = 400)
