@@ -1,13 +1,13 @@
 import jwt
 
-from django.http    import JsonResponse
+from django.http       import JsonResponse
 
-from json.decoder   import JSONDecodeError
+from json.decoder      import JSONDecodeError
 
-from jwt.exceptions import DecodeError
+from jwt.exceptions    import DecodeError
 
-from users.models   import User
-from brokurly.settings    import SECRET_KEY, ALGORITHM
+from users.models      import User
+from brokurly.settings import SECRET_KEY, ALGORITHM
 
 def login_required(func):
     def wrapper(self, request, *args, **kwargs):
