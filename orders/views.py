@@ -33,7 +33,7 @@ class OrderView(View):
                             order              = order,
                             order_items_status = order_items_status,
                             ))
-                    Cart.objects.get(product=item["product_id"]).delete()
+                    Cart.objects.get(product=product).delete()
                 OrderItem.objects.bulk_create(bulk_order_item_list)
                 
             return JsonResponse({"message":"SUCCESS"},status=201)
