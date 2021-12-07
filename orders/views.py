@@ -13,14 +13,15 @@ class OrderView(View):
     # @데코레이터(token) 들어갈 자리
     def post(self, request):
         try:
+            STATUS               = 1
             data                 = json.loads(request.body)
-            order_status         = OrderStatus.objects.get(id=1)
-            order_items_status   = OrderItemsStatus.objects.get(id=1)
+            order_status         = OrderStatus.objects.get(id=STATUS)
+            order_items_status   = OrderItemsStatus.objects.get(id=STATUS)
             
             with transaction.atomic():
                 order = Order.objects.create(order_status=order_status, users=request.user)
                 bulk_order_item_list = []
-            
+
                 for item in data:
                     product = Product.objects.get(id=item["product_id"])
                     bulk_order_item_list.append(
@@ -41,10 +42,10 @@ class OrderView(View):
             return JsonResponse({"message":"INVALID_ORDER_STATUS"},status=404)
         except OrderItemsStatus.DoesNotExist:
             return JsonResponse({"message":"INVALID_ORDER_ITEMS_STATUS"},status=404)
+        except Product.DoesNotExist:
+            return JsonResponse({"message":"INVALID_PRODUCT"},status=404)
         except Cart.DoesNotExist:
             return JsonResponse({"message":"INVALID_CART"},status=404)
-        except MultipleObjectsReturned:
-            return JsonResponse({"message":"INVALID_ORDER"},status=400)
         except DataError:
             return JsonResponse({"message":"DATA_ERROR"},status = 400)
         except transaction.TransactionManagementError:
@@ -52,7 +53,7 @@ class OrderView(View):
     
     # @데코레이터(token) 들어갈 자리
     def get(self, request):
-        
+
             orders = Order.objects.filter(users=request.user).prefetch_related(
                 "orderitem_set",
                 "orderitem_set__product__image_set",
@@ -73,7 +74,7 @@ class OrderView(View):
                     "name"     : orderItem.product.name,
                     "image"    : orderItem.product.image_set.all()[0].url,
                     "price"    : orderItem.product.price,
-                    "quentity" : orderItem.quantity,
+                    "quantity" : orderItem.quantity,
                     "status"   : orderItem.order_items_status.status,
                     }for orderItem in order.orderitem_set.all()]
                 resultItem["products"] = resultItem_list
@@ -86,12 +87,13 @@ class OrderView(View):
         try:
             data        = json.loads(request.body)
             orderStatus = OrderStatus.objects.get(id=9)
-            itemsStatus = OrderItemsStatus.objects.get(id=9)
+            itemsStatus = OrderItemsStatus.objects.get(id=10)
             
             with transaction.atomic():
                 if Order.objects.filter(id=data["order_id"]).exists():
-                    order = Order.objects.filter(id=data["order_id"]).update(order_status=orderStatus)
-                    order.orderitem_set.all().update(order_items_status=itemsStatus)
+                    order = Order.objects.filter(id=data["order_id"])
+                    order.update(order_status=orderStatus)
+                    order[0].orderitem_set.all().update(order_items_status=itemsStatus)
             
                     return JsonResponse({"message":"SUCCESS"},status=201)
 
@@ -103,7 +105,5 @@ class OrderView(View):
             return JsonResponse({"message":"INVALID_ORDER_STATUS"},status=404)
         except OrderItemsStatus.DoesNotExist:
             return JsonResponse({"message":"INVALID_ORDER_ITEMS_STATUS"},status=404)
-        except MultipleObjectsReturned:
-            return JsonResponse({"message":"INVALID_ORDER"},status=400)
         except transaction.TransactionManagementError:
             return JsonResponse({"message":"TRANSACTION_ERROR"},status=400)
