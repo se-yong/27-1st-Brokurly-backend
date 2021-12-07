@@ -46,6 +46,7 @@ class CartView(View):
             return JsonResponse ({'result' : result}, status = 404 )
         
         result = [{
+            'cart_id'         : item.id,
             'quantity'        : item.quantity,
             'product_id'      : item.product.id,
             'product_price'   : item.product.price,
@@ -77,7 +78,7 @@ class CartView(View):
     def delete(self, request):
         try:
             product = request.headers['product']
-            cart    = Cart.objects.filter(user = 1, product = product)
+            cart    = Cart.objects.filter(user = request.user, product = product)
 
             if cart.exists():
                 cart.delete()
