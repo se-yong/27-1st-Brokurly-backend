@@ -5,6 +5,7 @@ from products.models import Product, Category, Menu
 
 class ProductView(View):
     def get(self, request):
+
         try:
             menu_name = request.GET.get('menu', None)
             sort      = request.GET.get('sort', '0')
@@ -14,40 +15,40 @@ class ProductView(View):
                 '-price'     : '-price'
             }
 
-            if menu_name == '채소전체':
-                menu_name = '채소'
-                menus = Menu.objects.get(name=menu_name)
+            if menu_name   == '채소전체':
+                menu_name  = '채소'
+                menus      = Menu.objects.get(name=menu_name)
                 categories = Category.objects.filter(menu=menus).all()
-                products = Product.objects.filter(category__in=categories).all().order_by(sort_dict[sort])
-                results = []
+                products   = Product.objects.filter(category__in=categories).all().order_by(sort_dict[sort])
+                results    = []
 
             elif menu_name == '샐러드전체':
-                menu_name = '샐러드'
-                menus = Menu.objects.get(name=menu_name)
+                menu_name  = '샐러드'
+                menus      = Menu.objects.get(name=menu_name)
                 categories = Category.objects.filter(menu=menus).all()
-                products = Product.objects.filter(category__in=categories).all().order_by(sort_dict[sort])
-                results = []
+                products   = Product.objects.filter(category__in=categories).all().order_by(sort_dict[sort])
+                results    = []
 
             elif menu_name == '과일전체':
-                menu_name = '과일'
-                menus = Menu.objects.get(name=menu_name)
+                menu_name  = '과일'
+                menus      = Menu.objects.get(name=menu_name)
                 categories = Category.objects.filter(menu=menus).all()
-                products = Product.objects.filter(category__in=categories).all().order_by(sort_dict[sort])
-                results = []
+                products   = Product.objects.filter(category__in=categories).all().order_by(sort_dict[sort])
+                results    = []
 
             elif menu_name == '간편식전체':
-                menu_name = '간편식'
-                menus = Menu.objects.get(name=menu_name)
+                menu_name  = '간편식'
+                menus      = Menu.objects.get(name=menu_name)
                 categories = Category.objects.filter(menu=menus).all()
-                products = Product.objects.filter(category__in=categories).all().order_by(sort_dict[sort])
-                results = []
+                products   = Product.objects.filter(category__in=categories).all().order_by(sort_dict[sort])
+                results    = []
 
             if menu_name:
-                menus = Menu.objects.get(name=menu_name)
+                menus      = Menu.objects.get(name=menu_name)
                 categories = Category.objects.filter(menu=menus).all()
-                products = Product.objects.filter(category__in=categories).all().order_by(sort_dict[sort])
+                products   = Product.objects.filter(category__in=categories).all().order_by(sort_dict[sort])
                 # products = Product.objects.filter(category__menu_id=menu_name).all()
-                results = []
+                results    = []
 
             for product_data in products:
                 results.append(
@@ -58,7 +59,7 @@ class ProductView(View):
                         'image'        : [image.url for image in product_data.image_set.all()]
                     }
                 )
-            print(results)
+            
             return JsonResponse({'result':results}, status=201)
 
         except AttributeError:
@@ -74,24 +75,18 @@ class CategoryView(View):
     def get(self, request):
         try:
             category_name = request.GET.get('category', None) 
-            sort        = request.GET.get('sort', '0')
-            sort_dict = {
+            sort          = request.GET.get('sort', '0')
+            sort_dict     = {
                 'created_at' : 'created_at',
                 'price'      : 'price',
                 '-price'     : '-price'
             }
                 
-            # if category_name == '채소전체':
-            #     categories = Category.objects.get(name='쌈채소')
-            #     products = Product.objects.filter(category=categories).all().order_by(sort_dict[sort])
-            #     # products = Product.objects.filter(category_id=category_id, category__menu_id=menu_id)
-            #     results = []
-
             if category_name:
                 categories = Category.objects.get(name=category_name)
-                products = Product.objects.filter(category=categories).all().order_by(sort_dict[sort])
+                products   = Product.objects.filter(category=categories).all().order_by(sort_dict[sort])
                 # products = Product.objects.filter(category_id=category_id, category__menu_id=menu_id).all().order_by(sort_dict[sort])
-                results = []
+                results    = []
 
             for product_data in products:
                 results.append(
@@ -102,7 +97,7 @@ class CategoryView(View):
                         'image'        : [image.url for image in product_data.image_set.all()]
                     }
                 )
-            print(results)
+            
             return JsonResponse({'result':results}, status=201)
 
         except AttributeError:
