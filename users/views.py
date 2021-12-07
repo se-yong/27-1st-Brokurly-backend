@@ -12,7 +12,6 @@ from core.validator         import validates_email, validates_password, validate
 def check_existing_username(request):
     try:
         data     = json.loads(request.body)
-
         username = data['username']
 
         if User.objects.filter(username = username).exists():
@@ -25,10 +24,8 @@ def check_existing_username(request):
 
 def check_existing_email(request):
     try:
-        data     = json.loads(request.body)
-        
-
-        email   = data['email']
+        data  = json.loads(request.body)
+        email = data['email']
     
         if User.objects.filter(email = email).exists():
             return JsonResponse({'message' : 'EMAIL_ALREADY_EXISTS'}, status = 400)
