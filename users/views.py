@@ -7,28 +7,30 @@ from django.db              import DataError
 
 from brokurly.settings      import ALGORITHM, SECRET_KEY
 from users.models           import User
-from core.validator         import validates_email, validates_password, validates_username, validates_contact
+from core.validator         import validates_email, validates_password, validates_username
 
 def check_existing_username(request):
     try:
-        data     = request.body 
-
+        data     = json.loads(request.body)
         username = data['username']
-    
+
         if User.objects.filter(username = username).exists():
             return JsonResponse({'message' : 'USERNAME_ALREADY_EXISTS'}, status = 400)
+
+        return JsonResponse({"message": 'USERNAME_NOT_EXISTS'}, status=200)
     
     except KeyError:
         return JsonResponse({'messages' : 'KEY_ERROR'}, status = 400)
 
 def check_existing_email(request):
     try:
-        data    = request.body 
-
-        email   = data['email']
+        data  = json.loads(request.body)
+        email = data['email']
     
         if User.objects.filter(email = email).exists():
             return JsonResponse({'message' : 'EMAIL_ALREADY_EXISTS'}, status = 400)
+        
+        return JsonResponse({"message": 'EMAIL_NOT_EXISTS'}, status=200)
     
     except KeyError:
         return JsonResponse({'message' : 'KEY_ERROR'}, status = 400)
@@ -41,7 +43,6 @@ class SignUpView(View):
             validates_email(data['email'])
             validates_password(data['password'])
             validates_username(data['username'])
-            validates_contact(data['contact'])
             
             username = data['username']
             email    = data['email']
