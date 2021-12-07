@@ -10,7 +10,7 @@ class ProductView(View):
 
         try:
             menu_name = request.GET.get('menu', None)
-            sort      = request.GET.get('sort', '0')
+            sort      = request.GET.get('sort', 'created_at')
             sort_dict = {
                 'created_at' : 'created_at',
                 'price'      : 'price',
@@ -66,6 +66,9 @@ class ProductView(View):
 
         except AttributeError:
             return JsonResponse({'message' : 'AttributeError'}, status=400)
+
+        except KeyError:
+            return JsonResponse({'message' : 'KeyError'}, status=400)
         
         except TypeError:
             return JsonResponse({'message' : 'TypeError'}, status=400)
@@ -77,7 +80,7 @@ class CategoryView(View):
     def get(self, request):
         try:
             category_name = request.GET.get('category', None) 
-            sort          = request.GET.get('sort', '0')
+            sort          = request.GET.get('sort', 'created_at')
             sort_dict     = {
                 'created_at' : 'created_at',
                 'price'      : 'price',
@@ -104,6 +107,9 @@ class CategoryView(View):
 
         except AttributeError:
             return JsonResponse({'message' : 'AttributeError'}, status=400)
+
+        except KeyError:
+            return JsonResponse({'message' : 'KeyError'}, status=400)
         
         except TypeError:
             return JsonResponse({'message' : 'TypeError'}, status=400)
