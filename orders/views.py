@@ -34,7 +34,7 @@ class OrderView(View):
                     Cart.objects.get(product=product).delete()
                 OrderItem.objects.bulk_create(bulk_order_item_list)
                 
-            return JsonResponse({"message":"SUCCESS"},status=201)
+            return JsonResponse({"message":"CREATE"},status=201)
         
         except KeyError:
             return JsonResponse({"message":"KEY_ERROR"},status=400)
@@ -53,14 +53,14 @@ class OrderView(View):
     
     @login_required
     def get(self, request):
-
             orders = Order.objects.filter(users=request.user).prefetch_related(
                 "orderitem_set",
                 "orderitem_set__product__image_set",
                 "orderitem_set__order_items_status").select_related("order_status")
+                
             result=[]
             if not orders.exists():
-                return JsonResponse({"message":result},status=204)
+                return JsonResponse({"result":result},status=404)
                 
             for order in orders:
                 resultItem={
