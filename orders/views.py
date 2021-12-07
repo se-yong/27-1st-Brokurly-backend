@@ -3,14 +3,14 @@ import json
 from django.http            import JsonResponse
 from django.views           import View
 from django.db              import transaction, DataError
-from django.core.exceptions import MultipleObjectsReturned
 
-from .models     import Order, OrderStatus, OrderItem, OrderItemsStatus
-from cart.models import Cart
+from .models         import Order, OrderStatus, OrderItem, OrderItemsStatus
+from cart.models     import Cart
 from products.models import Product
+from core.decorator  import login_required
 
 class OrderView(View):
-    # @데코레이터(token) 들어갈 자리
+    @login_required
     def post(self, request):
         try:
             STATUS               = 1
@@ -20,8 +20,8 @@ class OrderView(View):
             
             with transaction.atomic():
                 order = Order.objects.create(order_status=order_status, users=request.user)
-                bulk_order_item_list = []
 
+                bulk_order_item_list = []
                 for item in data:
                     product = Product.objects.get(id=item["product_id"])
                     bulk_order_item_list.append(
@@ -51,7 +51,7 @@ class OrderView(View):
         except transaction.TransactionManagementError:
             return JsonResponse({"message":"TRANSACTION_ERROR"},status=400)
     
-    # @데코레이터(token) 들어갈 자리
+    @login_required
     def get(self, request):
 
             orders = Order.objects.filter(users=request.user).prefetch_related(
@@ -63,7 +63,6 @@ class OrderView(View):
                 return JsonResponse({"message":result},status=204)
                 
             for order in orders:
-
                 resultItem={
                     "order_id"     : order.id,
                     "order_number" : order.order_number,
@@ -76,18 +75,20 @@ class OrderView(View):
                     "price"    : orderItem.product.price,
                     "quantity" : orderItem.quantity,
                     "status"   : orderItem.order_items_status.status,
-                    }for orderItem in order.orderitem_set.all()]
+                    }
+                    for orderItem in order.orderitem_set.all()]
                 resultItem["products"] = resultItem_list
                 result.append(resultItem)
 
             return JsonResponse({"result":result},status=200)
 
-    # @데코레이터 들어갈자리
+    @login_required
     def patch(self, request):
         try:
+            STATUS      = 10
             data        = json.loads(request.body)
-            orderStatus = OrderStatus.objects.get(id=9)
-            itemsStatus = OrderItemsStatus.objects.get(id=10)
+            orderStatus = OrderStatus.objects.get(id=STATUS)
+            itemsStatus = OrderItemsStatus.objects.get(id=STATUS)
             
             with transaction.atomic():
                 if Order.objects.filter(id=data["order_id"]).exists():
@@ -95,9 +96,9 @@ class OrderView(View):
                     order.update(order_status=orderStatus)
                     order[0].orderitem_set.all().update(order_items_status=itemsStatus)
             
-                    return JsonResponse({"message":"SUCCESS"},status=201)
+                    return JsonResponse({"message":"SUCCESS"},status=200)
 
-                return JsonResponse({"message":"INVALID_ORDER_ID"},status=401)
+                return JsonResponse({"message":"INVALID_ORDER_ID"},status=400)
 
         except KeyError: 
             return JsonResponse({"message":"KEY_ERROR"},status=400)
