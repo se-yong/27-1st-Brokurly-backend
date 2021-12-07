@@ -3,10 +3,10 @@ import json
 from django.http            import JsonResponse
 from django.views           import View
 from django.db              import transaction, DataError
+from django.db.models       import Q
 
 from .models         import Order, OrderStatus, OrderItem, OrderItemsStatus
 from cart.models     import Cart
-from products.models import Product
 from core.decorator  import login_required
 
 class OrderView(View):
@@ -17,35 +17,34 @@ class OrderView(View):
             data                 = json.loads(request.body)
             order_status         = OrderStatus.objects.get(id=STATUS)
             order_items_status   = OrderItemsStatus.objects.get(id=STATUS)
+            cartItem             = Q()
+
+            for item in data:
+                cartItem |= Q(id=item['cart_id'])
             
+            carts = Cart.objects.filter(cartItem)
+            if carts.exists():
+                return JsonResponse({"message":"INVALID_CART"},status=201)
+
             with transaction.atomic():
                 order = Order.objects.create(order_status=order_status, users=request.user)
-
-                bulk_order_item_list = []
-                for item in data:
-                    product = Product.objects.get(id=item["product_id"])
-                    bulk_order_item_list.append(
-                        OrderItem(
-                            product            = product,
-                            quantity           = item["quantity"],
-                            order              = order,
-                            order_items_status = order_items_status,
-                            ))
-                    Cart.objects.get(product=product).delete()
-                OrderItem.objects.bulk_create(bulk_order_item_list)
+                bulk_list = [OrderItem(
+                    product            = cart.product,
+                    quantity           = cart.quantity,
+                    order              = order,
+                    order_items_status = order_items_status,
+                    )for cart in carts]
+                carts.delete()
+                OrderItem.objects.bulk_create(bulk_list)
                 
             return JsonResponse({"message":"CREATE"},status=201)
-        
+                
         except KeyError:
             return JsonResponse({"message":"KEY_ERROR"},status=400)
         except OrderStatus.DoesNotExist:
             return JsonResponse({"message":"INVALID_ORDER_STATUS"},status=404)
         except OrderItemsStatus.DoesNotExist:
             return JsonResponse({"message":"INVALID_ORDER_ITEMS_STATUS"},status=404)
-        except Product.DoesNotExist:
-            return JsonResponse({"message":"INVALID_PRODUCT"},status=404)
-        except Cart.DoesNotExist:
-            return JsonResponse({"message":"INVALID_CART"},status=404)
         except DataError:
             return JsonResponse({"message":"DATA_ERROR"},status = 400)
         except transaction.TransactionManagementError:
@@ -61,24 +60,21 @@ class OrderView(View):
             result=[]
             if not orders.exists():
                 return JsonResponse({"result":result},status=404)
-                
-            for order in orders:
-                resultItem={
-                    "order_id"     : order.id,
-                    "order_number" : order.order_number,
-                    "order_status" : order.order_status.status,
-                    } 
-                resultItem_list=[{
-                    "id"       : orderItem.product.id,
-                    "name"     : orderItem.product.name,
-                    "image"    : orderItem.product.image_set.all()[0].url,
-                    "price"    : orderItem.product.price,
-                    "quantity" : orderItem.quantity,
-                    "status"   : orderItem.order_items_status.status,
-                    }
-                    for orderItem in order.orderitem_set.all()]
-                resultItem["products"] = resultItem_list
-                result.append(resultItem)
+
+            result=[
+                {
+                "order_id"     : order.id,
+                "order_number" : order.order_number,
+                "order_status" : order.order_status.status,
+                "products"     : [{
+                "id"           : orderItem.product.id,
+                "name"         : orderItem.product.name,
+                "image"        : orderItem.product.image_set.all()[0].url,
+                "price"        : orderItem.product.price,
+                "quantity"     : orderItem.quantity,
+                "status"       : orderItem.order_items_status.status,
+                }for orderItem in order.orderitem_set.all()]
+                }for order in orders]
 
             return JsonResponse({"result":result},status=200)
 
