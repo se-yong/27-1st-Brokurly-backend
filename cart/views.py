@@ -3,13 +3,13 @@ import json
 from django.http        import JsonResponse
 from django.views       import View
 
-# from core.utils   import log_in_decorator
+from core.decorator     import login_required
 from users.models       import User
 from .models            import Cart
 from products.models    import Product
 
 class CartView(View):
-    # @log_in_decorator
+    @login_required
     def post(self, request):
         try:    
             data = json.loads(request.body)
@@ -38,9 +38,9 @@ class CartView(View):
         except Product.DoesNotExist:
             return JsonResponse({'messages' : 'INVALID_PRODUCT'}, status = 404)
 
-    # @ 데코레이터
+    @login_required
     def get(self, request):
-        carts = Cart.objects.filter(user = request.user)
+        carts  = Cart.objects.filter(user = request.user)
         result = []
         if not carts.exists():
             return JsonResponse ({'result' : result}, status = 404 )
@@ -56,7 +56,7 @@ class CartView(View):
 
         return JsonResponse({'result' : result}, status = 200)      
 
-    # @데코레이터
+    @login_required
     def patch(self, request):
         try:
             data = json.loads(request.body)
@@ -73,7 +73,7 @@ class CartView(View):
         except KeyError:
             return JsonResponse({'message' :'KEY_ERROR'}, status = 400)
     
-    # @데코레이터
+    @login_required
     def delete(self, request):
         try:
             product = request.headers['product']
