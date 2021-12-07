@@ -7,11 +7,11 @@ class ProductView(View):
     def get(self, request):
         try:
             menu_name = request.GET.get('menu', None)
-            sort      = request.GET.get('sort', 0)
+            sort      = request.GET.get('sort', '0')
             sort_dict = {
-                0 : 'created_at',
-                1 : 'price',
-                2 : '-price',
+                'created_at' : 'created_at',
+                'price'      : 'price',
+                '-price'     : '-price'
             }
 
             if menu_name == '채소전체':
@@ -73,19 +73,19 @@ class ProductView(View):
 class CategoryView(View):
     def get(self, request):
         try:
-            category_name = request.GET.get('category', None)
-            sort        = request.GET.get('sort', 0)
-            sort_dict   = {
-                0 : 'created_at',
-                1 : 'price',
-                2 : '-price',
+            category_name = request.GET.get('category', None) 
+            sort        = request.GET.get('sort', '0')
+            sort_dict = {
+                'created_at' : 'created_at',
+                'price'      : 'price',
+                '-price'     : '-price'
             }
                 
-            if category_name == 'all':
-                categories = Category.objects.get(name='쌈채소')
-                products = Product.objects.filter(category=categories).all().order_by(sort_dict[sort])
-                # products = Product.objects.filter(category_id=category_id, category__menu_id=menu_id)
-                results = []
+            # if category_name == '채소전체':
+            #     categories = Category.objects.get(name='쌈채소')
+            #     products = Product.objects.filter(category=categories).all().order_by(sort_dict[sort])
+            #     # products = Product.objects.filter(category_id=category_id, category__menu_id=menu_id)
+            #     results = []
 
             if category_name:
                 categories = Category.objects.get(name=category_name)
