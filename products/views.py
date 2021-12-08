@@ -10,7 +10,7 @@ class ProductView(View):
 
         try:
             menu_name     = request.GET.get('menu', '채소')
-            category_name = request.GET.get('category', '브로컬리') 
+            category_name = request.GET.get('category', None) 
             sort          = request.GET.get('sort', '-created_at')
             
             sort_dict = {
