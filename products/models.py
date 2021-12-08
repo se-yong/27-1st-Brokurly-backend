@@ -30,7 +30,7 @@ class Product(TimeStampModel):
     package            = models.CharField(max_length=50)
     origin             = models.CharField(max_length=50)
     price              = models.DecimalField(max_digits=10, decimal_places=2)
-    weight             = models.DecimalField(max_digits=10, decimal_places=2)
+    weight             = models.CharField(max_length=150)
     stock              = models.IntegerField(default=0)
     category           = models.ForeignKey('Category', on_delete=models.CASCADE)
 
