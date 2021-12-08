@@ -72,9 +72,8 @@ class CartView(View):
     def delete(self, request):
         try:
             data = json.loads(request.body)
-            
-            for id in data['cart_id']:
-                Cart.objects.get(id=id).delete()
+        
+            Cart.objects.filter(id__in=data['cart_id']).delete()
             
             return JsonResponse({'message' : 'SUCCESS'}, status = 200)
         
