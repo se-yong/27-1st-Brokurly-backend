@@ -43,6 +43,6 @@ class Product(TimeStampModel):
 class Image(TimeStampModel):
     url     = models.URLField()
     product = models.ForeignKey("Product",on_delete=models.CASCADE)
-  
+
     class Meta:
         db_table = 'images'
