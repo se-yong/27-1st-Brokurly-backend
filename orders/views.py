@@ -8,7 +8,6 @@ from django.db              import transaction, DataError
 from .models         import Order, OrderItem
 from cart.models     import Cart
 from core.decorator  import login_required
-from users.models   import User
 
 class OrderStatus(Enum):    
     WAIT_DEPOSIT       = 1   
@@ -35,7 +34,7 @@ class OrderView(View):
             with transaction.atomic():
                 order = Order.objects.create(
                     order_status_id = OrderStatus.WAIT_DEPOSIT.value, 
-                    users           = User.objects.get(id=request.user),
+                    users           = request.user,
                     order_number    = uuid.uuid4()
                     )
                 bulk_list = [OrderItem(
