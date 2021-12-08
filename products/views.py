@@ -55,17 +55,17 @@ class ProductDetailView(View):
             product = Product.objects.get(id=product_id)
             
             result = {
-              "id"           : product.id,
-              "name"         : product.name,
-              "price"        : product.price,
-              "introduction" : product.introduction,
-              "description"  : product.description,
-              "unit"         : product.unit,
-              "shipping"     : product.shipping,
-              "itemPackage"  : product.package,
-              "origin"       : product.origin,
-              "weight"       : product.weight,
-              "images"       : product.image_set.all()[0].url
+            "id"           : product.id,
+            "name"         : product.name,
+            "price"        : product.price,
+            "introduction" : product.introduction,
+            "description"  : product.description,
+            "unit"         : product.unit,
+            "shipping"     : product.shipping,
+            "itemPackage"  : product.package,
+            "origin"       : product.origin,
+            "weight"       : product.weight,
+            "images"       : product.image_set.all()[0].url
             }
 
             return JsonResponse({"result": result}, status=200)

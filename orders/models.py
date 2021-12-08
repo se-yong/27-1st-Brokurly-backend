@@ -14,7 +14,7 @@ class OrderStatus(models.Model):
         return self.status
 
 class Order(TimeStampModel):
-    order_number = models.CharField(max_length=100)
+    order_number = models.CharField(max_length=150)
     users        = models.ForeignKey(User, on_delete=models.CASCADE)
     order_status = models.ForeignKey('OrderStatus', on_delete=models.CASCADE)
 
@@ -34,7 +34,7 @@ class OrderItemsStatus(models.Model):
         return self.status
 
 class OrderItem(TimeStampModel):
-    tracking_number    = models.CharField(max_length=200)
+    tracking_number    = models.CharField(max_length=200,null=True)
     quantity           = models.IntegerField()
     order              = models.ForeignKey('Order', on_delete=models.CASCADE)
     product            = models.ForeignKey(Product, on_delete=models.CASCADE)
