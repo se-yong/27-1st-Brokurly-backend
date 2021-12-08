@@ -8,6 +8,7 @@ from django.db              import transaction, DataError
 from .models         import Order, OrderItem
 from cart.models     import Cart
 from core.decorator  import login_required
+from users.models   import User
 
 class OrderStatus(Enum):    
     WAIT_DEPOSIT       = 1   
@@ -26,16 +27,15 @@ class OrderView(View):
         try:
             data     = json.loads(request.body)
             cart_ids = data["cart_ids"]     
-            carts    = Cart.objects.filter(id__in=cart_ids,user=User.objects.get(id=1))
+            carts    = Cart.objects.filter(id__in=cart_ids,user=request.user)
 
             if not carts.exists():
                 return JsonResponse({"message":"INVALID_CART"},status=404)
             
             with transaction.atomic():
-
                 order = Order.objects.create(
                     order_status_id = OrderStatus.WAIT_DEPOSIT.value, 
-                    users           = User.objects.get(id=1),
+                    users           = User.objects.get(id=request.user),
                     order_number    = uuid.uuid4()
                     )
                 bulk_list = [OrderItem(
@@ -58,7 +58,7 @@ class OrderView(View):
     
     @login_required
     def get(self, request):
-            orders = Order.objects.filter(users=User.objects.get(id=1)).select_related("order_status")\
+            orders = Order.objects.filter(users=request.user).select_related("order_status")\
                                                              .prefetch_related("orderitem_set__product__image_set",
                                                                                "orderitem_set__order_items_status").order_by("-created_at")
            
@@ -85,7 +85,7 @@ class OrderView(View):
             
             with transaction.atomic():
                 order = Order.objects.get(id=data["order_id"])
-                order.status = OrderStatus.ORDER_CANCELLATION.value
+                order.order_status_id = OrderStatus.ORDER_CANCELLATION.value
                 order.save()
                 order.orderitem_set.all().update(order_items_status=OrderStatus.ORDER_CANCELLATION.value)
         
