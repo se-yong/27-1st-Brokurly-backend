@@ -19,9 +19,6 @@ class ProductView(View):
                 '-price'      : '-price'
             }
 
-            # offset
-            # limit
-
             if menu_name:
                 menu     = Menu.objects.get(name=menu_name)
                 products = Product.objects.filter(category__menu=menu).order_by(sort_dict[sort])
