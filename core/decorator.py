@@ -12,10 +12,8 @@ from brokurly.settings import SECRET_KEY, ALGORITHM
 def login_required(func):
     def wrapper(self, request, *args, **kwargs):
         try:
-            access_token = request.headers['authorization'] # FE에서 보내준 token
-            
+            access_token = request.headers['authorization']
             decode_token = jwt.decode(access_token, SECRET_KEY, ALGORITHM)
-        
             request.user = User.objects.get(id=decode_token['id'])
            
             return func(self, request, *args, **kwargs)

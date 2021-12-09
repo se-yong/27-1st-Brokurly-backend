@@ -19,12 +19,6 @@ class ProductView(View):
                 '-price'      : '-price'
             }
 
-            # if menu_name == None:
-            #     raise KeyError
-
-            # if category_name == None:
-            #     raise Category.DoesNotExist
-
             if menu_name:
                 menu     = Menu.objects.get(name=menu_name)
                 products = Product.objects.filter(category__menu=menu).order_by(sort_dict[sort])
@@ -32,7 +26,6 @@ class ProductView(View):
             if category_name:
                 category = Category.objects.get(name=category_name)
                 products = category.product_set.all().order_by(sort_dict[sort])
-
 
             results = [
                 {
@@ -55,7 +48,7 @@ class ProductView(View):
             return JsonResponse({'message' : 'TypeError'}, status=400)
 
         except Category.DoesNotExist:
-            return JsonResponse({'message' : 'DoesNotExits'}, status=500)
+            return JsonResponse({'message' : 'CategoryDoesNotExist'}, status=500)
 
 class ProductDetailView(View):
     def get(self, request, product_id):
