@@ -74,7 +74,7 @@ class OrderView(View):
                     "status"   : orderItem.order_items_status.status,
                 } for orderItem in order.orderitem_set.all()]
             } for order in orders]
-
+            print(result)
             return JsonResponse({"result":result},status=200)
 
     @login_required

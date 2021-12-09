@@ -48,7 +48,7 @@ class ProductView(View):
             return JsonResponse({'message' : 'TypeError'}, status=400)
 
         except Category.DoesNotExist:
-            return JsonResponse({'message' : 'CategoryDoesNotExist'}, status=500)
+            return JsonResponse({'message' : 'CategoryDoesNotExist'}, status=400)
 
 class ProductDetailView(View):
     def get(self, request, product_id):
