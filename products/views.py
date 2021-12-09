@@ -9,7 +9,7 @@ class ProductView(View):
     def get(self, request):
 
         try:
-            menu_name     = request.GET.get('menu', '채소')
+            menu_name     = request.GET.get('menu', None)
             category_name = request.GET.get('category', None) 
             sort          = request.GET.get('sort', '-created_at')
             
@@ -19,6 +19,12 @@ class ProductView(View):
                 '-price'      : '-price'
             }
 
+            # if menu_name == None:
+            #     raise KeyError
+
+            # if category_name == None:
+            #     raise Category.DoesNotExist
+
             if menu_name:
                 menu     = Menu.objects.get(name=menu_name)
                 products = Product.objects.filter(category__menu=menu).order_by(sort_dict[sort])
@@ -27,8 +33,10 @@ class ProductView(View):
                 category = Category.objects.get(name=category_name)
                 products = category.product_set.all().order_by(sort_dict[sort])
 
+
             results = [
                 {
+                    'id'           : product_data.id,
                     'name'         : product_data.name,
                     'introduction' : product_data.introduction,
                     'price'        : product_data.price,

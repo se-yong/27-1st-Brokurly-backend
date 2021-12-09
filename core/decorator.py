@@ -12,13 +12,12 @@ from brokurly.settings import SECRET_KEY, ALGORITHM
 def login_required(func):
     def wrapper(self, request, *args, **kwargs):
         try:
-            access_token = request.headers['token'] # FE에서 보내준 token
-            decode_token = jwt.decode('utf-8')(access_token, SECRET_KEY, algorithm=ALGORITHM)
+            access_token = request.headers['authorization'] # FE에서 보내준 token
+            
+            decode_token = jwt.decode(access_token, SECRET_KEY, ALGORITHM)
+        
             request.user = User.objects.get(id=decode_token['id'])
-
-            if 'token' not in request.headers:
-                return JsonResponse({'message':'Token not Exist'}, status=404)
-
+           
             return func(self, request, *args, **kwargs)
 
         except KeyError:

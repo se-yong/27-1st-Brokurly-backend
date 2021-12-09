@@ -20,7 +20,7 @@ def check_existing_username(request):
         return JsonResponse({"message": 'USERNAME_NOT_EXISTS'}, status=200)
     
     except KeyError:
-        return JsonResponse({'messages' : 'KEY_ERROR'}, status = 400)
+        return JsonResponse({'message' : 'KEY_ERROR'}, status = 400)
 
 def check_existing_email(request):
     try:
@@ -75,16 +75,14 @@ class SignInView(View):
     def post(self, request):
         try:
             data     = json.loads(request.body)
-            user     = data['username']
+            user     = User.objects.get(username = data['username'])
             password = data['password']
-
-            user     = User.objects.get(user = user)
 
             if not bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
                 return JsonResponse({'message': 'INVALID_PASSWORD'}, status = 401)
             
-            access_token = jwt.encode({'id' : user.id}, SECRET_KEY, algorithm = ALGORITHM)
-            return JsonResponse({'ACCESS_TOKEN' : access_token}, status = 200)
+            authorization = jwt.encode({'id' : user.id}, SECRET_KEY, algorithm = ALGORITHM).decode('utf-8')
+            return JsonResponse({'ACCESS_TOKEN' : authorization}, status = 200)
 
         except KeyError:
             return JsonResponse({'message' : 'KEY_ERROR'}, status = 400)
