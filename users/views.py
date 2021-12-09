@@ -78,12 +78,12 @@ class SignInView(View):
             user     = data['username']
             password = data['password']
 
-            user     = User.objects.get(user = user)
+            user     = User.objects.get(username = user)
 
             if not bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
                 return JsonResponse({'message': 'INVALID_PASSWORD'}, status = 401)
             
-            access_token = jwt.encode({'id' : user.id}, SECRET_KEY, algorithm = ALGORITHM)
+            access_token = jwt.encode({'id' : user.id}, SECRET_KEY, algorithm = ALGORITHM).decode('utf-8')
             return JsonResponse({'ACCESS_TOKEN' : access_token}, status = 200)
 
         except KeyError:
