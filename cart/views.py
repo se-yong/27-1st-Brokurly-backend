@@ -20,27 +20,30 @@ class CartView(View):
                 user_id    = request.user.id,
                 product_id = product_id,
             )
-
+            
             if not created:
                 cart.quantity += quantity
                 cart.save()
+                return JsonResponse({'message' : 'SUCCESS'}, status = 200)
+            
+            cart.quantity = quantity
+            cart.save()
 
-            return JsonResponse({'messages' : 'SUCCESS'}, status = 201)
+            return JsonResponse({'message' : 'SUCCESS'}, status = 201)
         
         except KeyError:
-            return JsonResponse({'messages' : 'KEY_ERROR'}, status = 400)
+            return JsonResponse({'message' : 'KEY_ERROR'}, status = 400)
         
         except User.DoesNotExist:
-            return JsonResponse({'messages' : 'INVALID_USER'}, status = 404)
+            return JsonResponse({'message' : 'INVALID_USER'}, status = 404)
         
         except Product.DoesNotExist:
-            return JsonResponse({'messages' : 'INVALID_PRODUCT'}, status = 404)
+            return JsonResponse({'message' : 'INVALID_PRODUCT'}, status = 404)
 
     @login_required
     def get(self, request):
         
         carts  = Cart.objects.select_related('product').filter(user = request.user)
-
         result = [{
             'cart_id'         : item.id,
             'quantity'        : item.quantity,
@@ -50,7 +53,6 @@ class CartView(View):
             'product_name'    : item.product.name,
             'product_image'   : item.product.image_set.all()[0].url
             } for item in carts.select_related('product').all()]
-
         return JsonResponse({'result' : result}, status = 200)      
 
     @login_required
@@ -72,7 +74,6 @@ class CartView(View):
     def delete(self, request):
         try:
             data = json.loads(request.body)
-        
             Cart.objects.filter(id__in=data['cart_id']).delete()
             
             return JsonResponse({'message' : 'SUCCESS'}, status = 200)

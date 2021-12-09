@@ -9,7 +9,7 @@ class ProductView(View):
     def get(self, request):
 
         try:
-            menu_name     = request.GET.get('menu', '채소')
+            menu_name     = request.GET.get('menu', None)
             category_name = request.GET.get('category', None) 
             sort          = request.GET.get('sort', '-created_at')
             
@@ -29,6 +29,7 @@ class ProductView(View):
 
             results = [
                 {
+                    'id'           : product_data.id,
                     'name'         : product_data.name,
                     'introduction' : product_data.introduction,
                     'price'        : product_data.price,
@@ -47,7 +48,7 @@ class ProductView(View):
             return JsonResponse({'message' : 'TypeError'}, status=400)
 
         except Category.DoesNotExist:
-            return JsonResponse({'message' : 'DoesNotExits'}, status=500)
+            return JsonResponse({'message' : 'CategoryDoesNotExist'}, status=400)
 
 class ProductDetailView(View):
     def get(self, request, product_id):
