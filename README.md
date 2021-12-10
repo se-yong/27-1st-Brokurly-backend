@@ -4,6 +4,7 @@
 - 기간 : 21.11.29 - 21.12.10
 - 구성 : Front-end 3명, Back-end 3명
 - [백엔드 github 주소] https://github.com/wecode-bootcamp-korea/27-1st-Brokurly-backend]
+- [프론트엔드 github 주소 ] https://github.com/wecode-bootcamp-korea/27-1st-Brokurly-frontend
 - [Notion 프로젝트 소개 및 정리] https://pineapple-voyage-3ed.notion.site/Brokurly-d007312f7573445c860e268ebc60fbe7
 
 ## ERD
